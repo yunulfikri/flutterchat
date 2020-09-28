@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "763788781684",
+    "firebase_url": "https://kupi-9fc02.firebaseio.com",
+    "project_id": "kupi-9fc02",
+    "storage_bucket": "kupi-9fc02.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:763788781684:android:fa5347ab24f48da2a88921",
+        "android_client_info": {
+          "package_name": "com.ruangbawah.kupiapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "763788781684-9biaunu8671f7sklgt1n40sd0bv2e13v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ruangbawah.kupiapp",
+            "certificate_hash": "b836f17f696843b8e57e6308d005cbc9da817872"
+          }
+        },
+        {
+          "client_id": "763788781684-hk5679h8oqacggplc2nahl8dlmpr4fni.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4e_KUGeRWNIlkadgf5lO2cvSXpBaywZI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "763788781684-hk5679h8oqacggplc2nahl8dlmpr4fni.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
