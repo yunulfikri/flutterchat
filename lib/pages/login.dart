@@ -1,9 +1,5 @@
-import 'dart:ui';
+part of 'index.dart';
 
-import 'package:flutter/material.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -14,7 +10,19 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   String initialCountry = 'ID';
   PhoneNumber number = PhoneNumber(isoCode: 'ID');
   String phonenumber = "";
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String status = "---";
+  String phoneNo;
+  String smsCode;
+  String verificationId;
+  final _codeController = TextEditingController();
+  PageController _controller = new PageController(initialPage: 0, viewportFraction: 1.0);
 
+  @override
+  void initState() { 
+    super.initState();
+  }
+  
 
   Widget HomePage() {
     return new Container(
@@ -33,7 +41,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.symmetric(horizontal:120.0),
+            padding: EdgeInsets.symmetric(horizontal: 120.0),
             margin: EdgeInsets.only(top: 50.0),
             child: Center(
               child: Icon(
@@ -44,18 +52,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal:120.0, vertical: 10.0),
+            padding: EdgeInsets.symmetric(horizontal: 120.0, vertical: 10.0),
             margin: EdgeInsets.only(bottom: 30.0),
             child: Center(
                 child: Text(
-                  "Kupi Chatt",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30.0,
-                      color: Colors.white
-                  ),
-                )
-            ),
+              "Kupi Chatt",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30.0,
+                  color: Colors.white),
+            )),
           ),
           new Container(
             width: MediaQuery.of(context).size.width,
@@ -99,8 +105,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
-
-
   Widget LoginPage() {
     return new Container(
       height: MediaQuery.of(context).size.height,
@@ -116,7 +120,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       child: new Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.symmetric(horizontal:120.0),
+            padding: EdgeInsets.symmetric(horizontal: 120.0),
             margin: EdgeInsets.only(top: 50.0),
             child: Center(
               child: Icon(
@@ -127,18 +131,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal:120.0, vertical: 10.0),
+            padding: EdgeInsets.symmetric(horizontal: 120.0, vertical: 10.0),
             margin: EdgeInsets.only(bottom: 30.0),
             child: Center(
-              child: Text(
-                  "Kupi Chatt",
-                style: TextStyle(
+                child: Text(
+              "Kupi Chatt",
+              style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 30.0,
-                  color: Colors.redAccent
-                ),
-              )
-            ),
+                  color: Colors.redAccent),
+            )),
           ),
           new Row(
             children: <Widget>[
@@ -176,7 +178,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               children: <Widget>[
                 new Expanded(
                   child: InternationalPhoneNumberInput(
-                    onInputChanged: (PhoneNumber number){
+                    onInputChanged: (PhoneNumber number) {
                       setState(() {
                         phonenumber = number.phoneNumber;
                       });
@@ -248,8 +250,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
-
-
   gotoLogin() {
     //controller_0To1.forward(from: 0.0);
     _controller.animateToPage(
@@ -258,79 +258,78 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       curve: Curves.easeIn,
     );
   }
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  String status = "---";
-  Future authLogin()async{
-    print(phonenumber);
-  }
 
-  String phoneNo;
-  String smsCode;
-  String verificationId;
-  final _codeController = TextEditingController();
+  
   Future<void> verifyPhone() async {
-
     final PhoneCodeSent smsCodeSent = (String verId, [int forceCodeResend]) {
       this.verificationId = verId;
       showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          title: Text("Enter SMS Code"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _codeController,
-              )
-            ],
-          ),
-          actions: [
-            FlatButton(
-              child: Text("Confirm"),
-              textColor: Colors.white,
-              color: Colors.redAccent,
-              onPressed: ()async{
-                smsCode = _codeController.text.trim();
-                AuthCredential credential = PhoneAuthProvider.getCredential(verificationId: verificationId, smsCode: smsCode);
-                await _auth.signInWithCredential(credential).then((result) {
-                  if(result.user != null){
-                    print("sukses login");
-                    print(result.user.phoneNumber);
-                  }else{
-                    print("Error verified");
-                  }
-                });
-                
-              },
-            )
-          ],
-        )
-      );
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+                title: Text("Enter SMS Code"),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: _codeController,
+                    )
+                  ],
+                ),
+                actions: [
+                  FlatButton(
+                    child: Text("Confirm"),
+                    textColor: Colors.white,
+                    color: Colors.redAccent,
+                    onPressed: () async {
+                      smsCode = _codeController.text.trim();
+                      AuthCredential credential = PhoneAuthProvider.credential(
+                          verificationId: verificationId, smsCode: smsCode);
+                      await _auth
+                          .signInWithCredential(credential)
+                          .then((result) {
+                        if (result.user != null) {
+                          print("sukses login");
+                          print(result.user.phoneNumber);
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MainPage()));
+                        } else {
+                          print("Error verified");
+                        }
+                      });
+                    },
+                  )
+                ],
+              ));
     };
 
-    final PhoneVerificationCompleted verifiedSuccess = (PhoneAuthCredential user) {
-
+    final PhoneVerificationCompleted verifiedSuccess =
+        (PhoneAuthCredential user) {
       Navigator.of(context).pop();
     };
 
-    final PhoneVerificationFailed veriFailed = (FirebaseAuthException exception) {
+    final PhoneVerificationFailed veriFailed =
+        (FirebaseAuthException exception) {
       setState(() {
-        status = "Kode Verifikasi Salah";
+        status = exception.message;
       });
     };
+    print(this.phonenumber);
 
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: this.phonenumber,
-        codeAutoRetrievalTimeout: null,
+        codeAutoRetrievalTimeout: (String verificationId){
+          print("auto retrival timeout" + verificationId);
+        },
         codeSent: smsCodeSent,
         timeout: const Duration(seconds: 120),
         verificationCompleted: verifiedSuccess,
         verificationFailed: veriFailed);
+
+    
   }
+  
 
-
-  PageController _controller = new PageController(initialPage: 1, viewportFraction: 1.0);
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -341,10 +340,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             child: PageView(
               controller: _controller,
               physics: new AlwaysScrollableScrollPhysics(),
-              children: <Widget>[
-                HomePage(),
-                LoginPage()
-              ],
+              children: <Widget>[HomePage(), LoginPage()],
               scrollDirection: Axis.horizontal,
             ),
           ),
