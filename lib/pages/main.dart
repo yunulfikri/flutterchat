@@ -6,13 +6,89 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  final scaffoldState = GlobalKey<ScaffoldState>();
+  final firebaseMessaging = FirebaseMessaging();
   String phoneNumber = "00";
-  @override
-  void initState() {
-    super.initState();
-    calldata();
+  final controllerTopic = TextEditingController();
+  bool isSubscribed = false;
+  String token = '';
+  static String dataName = '';
+  static String dataAge = '';
+
+  static Future<dynamic> onBackgroundMessage(Map<String, dynamic> message) {
+    debugPrint('onBackgroundMessage: $message');
+    if (message.containsKey('data')) {
+      String name = '';
+      String age = '';
+      if (Platform.isIOS) {
+        name = message['name'];
+        age = message['age'];
+      } else if (Platform.isAndroid) {
+        var data = message['data'];
+        name = data['name'];
+        age = data['age'];
+      }
+      dataName = name;
+      dataAge = age;
+      debugPrint('onBackgroundMessage: name: $name & age: $age');
+    }
+    return null;
   }
 
+  void getDataFcm(Map<String, dynamic> message) {
+    String name = '';
+    String age = '';
+    if (Platform.isIOS) {
+      name = message['name'];
+      age = message['age'];
+    } else if (Platform.isAndroid) {
+      var data = message['data'];
+      name = data['name'];
+      age = data['age'];
+    }
+    if (name.isNotEmpty && age.isNotEmpty) {
+      setState(() {
+        dataName = name;
+        dataAge = age;
+      });
+    }
+    debugPrint('getDataFcm: name: $name & age: $age');
+  }
+  @override
+  void initState() {
+    firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        debugPrint('onMessage: $message');
+        getDataFcm(message);
+      },
+      onBackgroundMessage: onBackgroundMessage,
+      onResume: (Map<String, dynamic> message) async {
+        debugPrint('onResume: $message');
+        getDataFcm(message);
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        debugPrint('onLaunch: $message');
+        getDataFcm(message);
+      },
+    );
+    firebaseMessaging.requestNotificationPermissions(
+      const IosNotificationSettings(sound: true, badge: true, alert: true, provisional: true),
+    );
+    firebaseMessaging.onIosSettingsRegistered.listen((settings) {
+      debugPrint('Settings registered: $settings');
+    });
+    firebaseMessaging.getToken().then((token) => setState(() {
+      this.token = token;
+    }));
+    tokenprint();
+    super.initState();
+    calldata();
+
+  }
+  tokenprint() async{
+    String y = await firebaseMessaging.getToken();
+    print("token = " + y);
+  }
   calldata() {
     setState(() {
       phoneNumber = FirebaseAuth.instance.currentUser.phoneNumber;
@@ -109,14 +185,79 @@ class ChatList extends StatelessWidget {
         picture: "",
         type: "s",
         time: "13:35"),
+    ChatData(
+        uid: "sdnskdnawssd",
+        name: "Bella Cantik",
+        content: "Jadi kerumah engga? kosong nih",
+        picture:
+        "https://images.pexels.com/photos/2683896/pexels-photo-2683896.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        type: "r",
+        time: "13:35"),
+    ChatData(
+        uid: "sdnskdnawd",
+        name: "Sinta",
+        content: "Hai apa kabar",
+        picture:
+        "https://images.pexels.com/photos/4884147/pexels-photo-4884147.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        type: "s",
+        time: "13:35"),
+    ChatData(
+        uid: "sdnskdnawssd",
+        name: "Delia",
+        content: "Hai apa kabar",
+        picture:
+        "https://images.pexels.com/photos/2683896/pexels-photo-2683896.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        type: "r",
+        time: "13:35"),
+    ChatData(
+        uid: "sdnskdnawssd",
+        name: "Yunul",
+        content: "Bagaimana kabarmu?",
+        picture: "",
+        type: "s",
+        time: "13:35"),
+    ChatData(
+        uid: "sdnskdnawssd",
+        name: "Bella Cantik",
+        content: "Jadi kerumah engga? kosong nih",
+        picture:
+        "https://images.pexels.com/photos/2683896/pexels-photo-2683896.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        type: "r",
+        time: "13:35"),
+    ChatData(
+        uid: "sdnskdnawd",
+        name: "Sinta",
+        content: "Hai apa kabar",
+        picture:
+        "https://images.pexels.com/photos/4884147/pexels-photo-4884147.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        type: "s",
+        time: "13:35"),
+    ChatData(
+        uid: "sdnskdnawssd",
+        name: "Delia",
+        content: "Hai apa kabar",
+        picture:
+        "https://images.pexels.com/photos/2683896/pexels-photo-2683896.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        type: "r",
+        time: "13:35"),
+    ChatData(
+        uid: "sdnskdnawssd",
+        name: "Yunul",
+        content: "Bagaimana kabarmu?",
+        picture: "",
+        type: "s",
+        time: "13:35"),
   ];
-  Widget _listSent(nama, content, pic, time) {
+  Widget _listSent(nama, content, pic, time,context) {
     return Container(
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(15.0)),
       margin: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
       child: ListTile(
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen()));
+        },
         contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
         title: Text(nama, style: TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Wrap(
@@ -146,7 +287,7 @@ class ChatList extends StatelessWidget {
     );
   }
 
-  Widget _listRecv(nama, content, pic, time) {
+  Widget _listRecv(nama, content, pic, time,context) {
     return Container(
       decoration: BoxDecoration(
           color: Colors.white,
@@ -191,10 +332,10 @@ class ChatList extends StatelessWidget {
       itemBuilder: (context, index) {
         if (chatDummy[index].type == "s") {
           return _listSent(chatDummy[index].name, chatDummy[index].content,
-              chatDummy[index].picture, chatDummy[index].time);
+              chatDummy[index].picture, chatDummy[index].time, context);
         } else {
           return _listRecv(chatDummy[index].name, chatDummy[index].content,
-              chatDummy[index].picture, chatDummy[index].time);
+              chatDummy[index].picture, chatDummy[index].time, context);
         }
       },
     );
