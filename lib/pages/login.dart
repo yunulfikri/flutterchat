@@ -16,13 +16,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   String smsCode;
   String verificationId;
   final _codeController = TextEditingController();
-  PageController _controller = new PageController(initialPage: 0, viewportFraction: 1.0);
+  PageController _controller =
+      new PageController(initialPage: 0, viewportFraction: 1.0);
 
   @override
-  void initState() { 
+  void initState() {
     super.initState();
   }
-  
 
   Widget HomePage() {
     return new Container(
@@ -259,7 +259,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
-  
+  SharedPreferences prefs;
   Future<void> verifyPhone() async {
     final PhoneCodeSent smsCodeSent = (String verId, [int forceCodeResend]) {
       this.verificationId = verId;
@@ -285,17 +285,48 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       smsCode = _codeController.text.trim();
                       AuthCredential credential = PhoneAuthProvider.credential(
                           verificationId: verificationId, smsCode: smsCode);
-                      await _auth
-                          .signInWithCredential(credential)
-                          .then((result) {
-                        if (result.user != null) {
-                          print("sukses login");
-                          print(result.user.phoneNumber);
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MainPage()));
+                      User firebaseUser =
+                          (await _auth.signInWithCredential(credential)).user;
+                      if (firebaseUser != null) {
+                        final QuerySnapshot resultQuery =
+                            await FirebaseFirestore.instance
+                                .collection("users")
+                                .where('id', isEqualTo: firebaseUser.uid)
+                                .get();
+
+                        final List<DocumentSnapshot> documents =
+                            resultQuery.docs;
+                        if (documents.length == 0) {
+                          // direct to fill empty signup form
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MainPage()));
                         } else {
-                          print("Error verified");
+                          // direct to main app
+                          await prefs.setString(
+                              'id', documents[0].data()['id']);
+                          await prefs.setString(
+                              'nickname', documents[0].data()['nickname']);
+                          await prefs.setString(
+                              'photoUrl', documents[0].data()['photoUrl']);
+                          await prefs.setString(
+                              'aboutMe', documents[0].data()['aboutMe']);
                         }
-                      });
+                      } else {
+                        // fail auth
+                        Fluttertoast.showToast(msg: "Failed, try again");
+                      }
+                      // await _auth
+                      //     .signInWithCredential(credential)
+                      //     .then((result) {
+                      //   if (result.user != null) {
+                      //     print("sukses login");
+                      //     print(result.user.phoneNumber);
+                      //   } else {
+                      //     print("Error verified");
+                      //   }
+                      // });
                     },
                   )
                 ],
@@ -317,19 +348,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: this.phonenumber,
-        codeAutoRetrievalTimeout: (String verificationId){
+        codeAutoRetrievalTimeout: (String verificationId) {
           print("auto retrival timeout" + verificationId);
         },
         codeSent: smsCodeSent,
         timeout: const Duration(seconds: 120),
         verificationCompleted: verifiedSuccess,
         verificationFailed: veriFailed);
-
-    
   }
-  
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

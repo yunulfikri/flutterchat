@@ -8,24 +8,28 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final FocusNode focusNode = FocusNode();
   final TextEditingController msgEditingController = TextEditingController();
+  SharedPreferences prefs;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          leading: Row(children: [
-            IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: (){
-                Navigator.pop(context);
-              },
-            ),
-            CircleAvatar(
-              child: Text(
-                "US"
+          leading: Row(
+            children: [
+              IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: (){
+                  Navigator.pop(context);
+                },
               ),
-            )
-          ],),
+              CircleAvatar(
+                child: Text(
+                  "US"
+                ),
+              )
+            ],
+          ),
           leadingWidth: 90.0,
           title: Text(
             "Undr Support",
@@ -71,6 +75,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 1.0),
               child: IconButton(
+                onPressed: (){},
                 icon: Icon(Icons.image),
               ),
             ),
@@ -80,6 +85,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 1.0),
               child: IconButton(
+                onPressed: (){},
                 icon: Icon(Icons.face),
               ),
             ),
@@ -109,6 +115,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 8.0),
               child: IconButton(
+                onPressed: (){},
                 icon: Icon(Icons.send),
               ),
             ),
@@ -132,7 +139,12 @@ class _ChatScreenState extends State<ChatScreen> {
         .doc("sdeNisa")
         .collection("sdeNisa")
         .doc(DateTime.now().millisecondsSinceEpoch.toString());
+      Firestore.instance.runTransaction((transaction) async{
+        await transaction.set(documentReference, {
+          // 'idFrom': id,
 
+        });
+      });
     }
   }
 }
