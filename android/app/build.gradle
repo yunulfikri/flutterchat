@@ -38,6 +38,7 @@ android {
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
     dependencies {
         implementation 'com.google.firebase:firebase-messaging:20.2.4'

@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     super.initState();
   }
 
-  Widget HomePage() {
+  Widget homePage() {
     return new Container(
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget LoginPage() {
+  Widget loginPage() {
     return new Container(
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
@@ -298,20 +298,19 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             resultQuery.docs;
                         if (documents.length == 0) {
                           // direct to fill empty signup form
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MainPage()));
+
+                          Navigator.pushReplacementNamed(context, '/signuppage');
                         } else {
+                          Navigator.pushReplacementNamed(context, '/mainpage');
                           // direct to main app
-                          await prefs.setString(
-                              'id', documents[0].data()['id']);
-                          await prefs.setString(
-                              'nickname', documents[0].data()['nickname']);
-                          await prefs.setString(
-                              'photoUrl', documents[0].data()['photoUrl']);
-                          await prefs.setString(
-                              'aboutMe', documents[0].data()['aboutMe']);
+                          // await prefs.setString(
+                          //     'id', documents[0].data()['id']);
+                          // await prefs.setString(
+                          //     'nickname', documents[0].data()['nickname']);
+                          // await prefs.setString(
+                          //     'photoUrl', documents[0].data()['photoUrl']);
+                          // await prefs.setString(
+                          //     'aboutMe', documents[0].data()['aboutMe']);
                         }
                       } else {
                         // fail auth
@@ -367,7 +366,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             child: PageView(
               controller: _controller,
               physics: new AlwaysScrollableScrollPhysics(),
-              children: <Widget>[HomePage(), LoginPage()],
+              children: <Widget>[homePage(), loginPage()],
               scrollDirection: Axis.horizontal,
             ),
           ),

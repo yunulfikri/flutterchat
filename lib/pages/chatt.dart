@@ -15,39 +15,23 @@ class _ChatScreenState extends State<ChatScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          leading: Row(
-            children: [
-              IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: (){
-                  Navigator.pop(context);
-                },
-              ),
-              CircleAvatar(
-                child: Text(
-                  "US"
-                ),
-              )
-            ],
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          leadingWidth: 90.0,
-          title: Text(
-            "Undr Support",
-            style: TextStyle(
-                fontWeight: FontWeight.normal,
-                fontSize: 17.0
-            )),
+          title: Text("Undr Support",
+              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 17.0)),
           actions: [
             IconButton(
               splashRadius: 20.0,
               icon: Icon(Icons.more_vert),
-              onPressed: (){},
+              onPressed: () {},
             )
           ],
         ),
-        body: Column(
-          mainAxisSize: MainAxisSize.max,
-            children: [
+        body: Column(mainAxisSize: MainAxisSize.max, children: [
           Flexible(
             child: Center(
               child: CircularProgressIndicator(
@@ -62,10 +46,6 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-
-
-
-
   Widget buildInput() {
     return Container(
       child: Row(
@@ -75,7 +55,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 1.0),
               child: IconButton(
-                onPressed: (){},
+                onPressed: () {},
                 icon: Icon(Icons.image),
               ),
             ),
@@ -85,7 +65,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 1.0),
               child: IconButton(
-                onPressed: (){},
+                onPressed: () {},
                 icon: Icon(Icons.face),
               ),
             ),
@@ -115,7 +95,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 8.0),
               child: IconButton(
-                onPressed: (){},
+                onPressed: () {},
                 icon: Icon(Icons.send),
               ),
             ),
@@ -132,17 +112,16 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void onSendMessage(String content, int type) {
-    if(content.trim() != ''){
+    if (content.trim() != '') {
       msgEditingController.clear();
       var documentReference = FirebaseFirestore.instance
-        .collection('messages')
-        .doc("sdeNisa")
-        .collection("sdeNisa")
-        .doc(DateTime.now().millisecondsSinceEpoch.toString());
-      Firestore.instance.runTransaction((transaction) async{
+          .collection('messages')
+          .doc("sdeNisa")
+          .collection("sdeNisa")
+          .doc(DateTime.now().millisecondsSinceEpoch.toString());
+      Firestore.instance.runTransaction((transaction) async {
         await transaction.set(documentReference, {
           // 'idFrom': id,
-
         });
       });
     }
