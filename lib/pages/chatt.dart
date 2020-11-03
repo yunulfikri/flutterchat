@@ -45,6 +45,7 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
+  
 
   Widget buildInput() {
     return Container(
